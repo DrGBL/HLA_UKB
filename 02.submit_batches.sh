@@ -6,7 +6,7 @@ conda activate dnanexus-env
 
 java -jardxCompiler-2.5.0.jar compile workflow.wdl -project exome_full -folder /my_workflows/
 
-#now move to the directory where you'll work (in my case, where the 
+#now move to the directory where you'll work (in my case, where the "batches" folder is located)
 cd /project/richards/guillaume.butler-laporte/HLA/ukb_wes/
 
 dx cd '/'
