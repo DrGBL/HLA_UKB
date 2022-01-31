@@ -20,7 +20,7 @@ while read folder; do
   dx generate_batch_inputs -icram_file='(.*).cram$' --path 'exome_full:Bulk/Exome sequences/Exome OQFE CRAM files/'${folder}'/' -o 'batches_prelim/folder_'${folder}
 done < folders_full_exomes.txt
 
-read folder; do
+while read folder; do
   head -n 1 batches_prelim/folder_${folder}.0000.tsv > batches/batch_${folder}.tsv
   awk 'FNR>1' batches_prelim/folder_${folder}* >> batches/batch_${folder}.tsv
   sed -i 's/cram_file/stage-common.cram_file/g' batches/batch_${folder}.tsv
