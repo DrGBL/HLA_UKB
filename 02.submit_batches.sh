@@ -12,7 +12,7 @@ cd /project/richards/guillaume.butler-laporte/HLA/ukb_wes/
 dx cd '/'
 
 #example where I run batch 10
-dx run my_workflows/workflow_wf \           #your workflow
+dx run my_workflows/hla_calling_wf \           #your workflow
   --batch-tsv batches/batch_10.tsv \    #the batch, this is on Hydra
   -istage-common.ref_genome="Homo_sapiens_assembly38.fasta.gz" \      #the next four files need to be on your project on dna-nexus
   -istage-common.ref_genome_index="Homo_sapiens_assembly38.fasta.gz.fai" \
