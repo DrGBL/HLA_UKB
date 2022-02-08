@@ -72,6 +72,7 @@ task hla_calling {
     >>>
 
     runtime {
+        docker: "monsieurbl/hla_seq:hla_seq_v7"
         #if you want to choose the specific instances for the calling.
         #dx_instance_type: "mem3_ssd1_v2_x8"
         #dx_instance_type: "mem3_ssd1_v2_x32"
