@@ -69,7 +69,7 @@ task hla_calling {
 
     runtime {
         docker: "" #need to add the required HLA-HD docker image
-        dx_instance_type: "mem3_ssd1_v2_x8" #adjust if want more memore and RAM
+        dx_instance_type: "mem3_ssd1_v2_x8" #adjust if want more memory and RAM
     }
 
     output {
