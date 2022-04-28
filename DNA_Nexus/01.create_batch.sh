@@ -6,10 +6,9 @@ conda activate dnanexus-env
 
 dx login #enter your username and password
 
-#below I'm showing what I did for the HLA work, adapt as needed
 #it assumes that there's a folder called "batches" and another one named "batches_prelim" in the working directory
 
-cd /project/richards/guillaume.butler-laporte/HLA/ukb_wes/
+cd /your/directory
 
 dx cd '/Bulk/Exome sequences/Exome OQFE CRAM files/'
 
