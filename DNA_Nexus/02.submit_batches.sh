@@ -4,10 +4,10 @@ conda activate dnanexus-env
 #it uses the dna-nexus wdl compiling java application, available here: https://github.com/dnanexus/dxCompiler/releases
 #note the name of my project here was "exome_full", change this to whatever is needed for you
 
-java -jardxCompiler-2.5.0.jar compile workflow.wdl -project exome_full -folder /my_workflows/
+java -jardxCompiler-2.5.0.jar compile hla_dnanexus.wdl  -project exome_full -folder /my_workflows/
 
 #now move to the directory where you'll work (in my case, where the "batches" folder is located)
-cd /project/richards/guillaume.butler-laporte/HLA/ukb_wes/
+cd /your/local/directory
 
 dx cd '/'
 
