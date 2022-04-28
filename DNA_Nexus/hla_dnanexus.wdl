@@ -17,7 +17,7 @@ workflow hla_calling_wf {
     }
 
     call hla_calling {
-        input: fastq1 = fatsq_conversion.fastq1, fastq2 = fatsq_conversion.fastq2, min_read_length = min_read_length
+        input: fastq1 = fatsq_conversion.fastq1, fastq2 = fatsq_conversion.fastq2, min_read_length = min_read_length, cores_hla = cores_hla
     }
 
     output {
@@ -58,11 +58,11 @@ task hla_calling {
         File fastq1
         File fastq2
         Int min_read_length
-
+        Int cores_hla
     }
 
     command <<<
-        hlahd.sh -t 8 -m ~{min_read_length} -f /HLA/hlahd.1.4.0/freq_data/ ~{fastq1} ~{fastq2}  /HLA/hlahd.1.4.0/HLA_gene.split.3.32.0.txt /HLA/hlahd.1.4.0/dictionary/ test_call .
+        hlahd.sh -t ~{cores_hla} -m ~{min_read_length} -f /HLA/hlahd.1.4.0/freq_data/ ~{fastq1} ~{fastq2}  /HLA/hlahd.1.4.0/HLA_gene.split.3.32.0.txt /HLA/hlahd.1.4.0/dictionary/ test_call .
         tar -zcf  hla_res.tar.gz test_call/result/
     >>>
 
