@@ -16,4 +16,4 @@ We assume that the user already has approved UK Biobank and DNA Nexus accounts.
 
 ***03.check_missing.R***: this is an R function provided to find participants for which the pipeline failed, and needs to be recalled. Using our setting (i.e. low priority job), an average of 1% of jobs were cancelled and needed to be restarted. This assumes that you have downloaded the batches obtained from step 02 above in your local cluster.
 
-***04.check_missing_calls.R***: this is a second function where sometimes the DNA Nexus job was killed before HLA calls were finished, but after a folder was created for a participant's results. This was also rare (included in the 1% figure above). These also need to be restarted.
+***04.check_missing_calls.R***: this is a second function to check for situation where the DNA Nexus job was killed before HLA calls were finished, but after a folder was created for a participant's results. This was also rare (included in the 1% figure above). These also need to be restarted.
