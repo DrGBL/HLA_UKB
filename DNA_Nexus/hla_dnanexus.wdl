@@ -9,7 +9,8 @@ workflow hla_calling_wf {
         File ref_genome_index   #https://github.com/broadinstitute/gatk/raw/master/src/test/resources/large/Homo_sapiens_assembly38.fasta.gz.fai
         File ref_genome_dict    #https://github.com/broadinstitute/gatk/raw/master/src/test/resources/large/Homo_sapiens_assembly38.dict
         File ref_genome_gzi     #https://github.com/broadinstitute/gatk/raw/master/src/test/resources/large/Homo_sapiens_assembly38.fasta.gz.gzi
-        Int min_read_length
+        Int min_read_length     #set to 50 for our pipeline, as per bowtie2 recommendations
+        Int cores_hla           #may also need to adjust dx_instance_type in the runtime section below if number of cores changes
     }
 
     call fatsq_conversion { 
