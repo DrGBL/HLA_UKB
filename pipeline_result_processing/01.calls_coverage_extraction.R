@@ -49,13 +49,13 @@ for(folder in 50:60){
       rbind(genes_hla) %>%
       distinct()
     
-    setwd(paste0("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/hla_calling_hla_hd_batch_", folder, "/", sample, "/"))
+    setwd(paste0("/your/local/folder/hla_calling_hla_hd_batch_", folder, "/", sample, "/"))
     
     tar(paste0(sample,".tar.gz"), "result", compression = 'gzip', tar="tar")
     file.remove("hla_res.tar.gz")
     unlink("result", recursive = TRUE)
     
-    setwd("/project/richards/guillaume.butler-laporte/HLA/ukb_wes")
+    setwd("/your/local/folder/ukb_wes")
 
     if(nrow(genes_hla) > 34){
       break
@@ -188,7 +188,7 @@ for(folder in 50:60){
     #now remove the recently untarred tar ball
     unlink("result", recursive = TRUE)
     
-    setwd("/project/richards/guillaume.butler-laporte/HLA/ukb_wes")
+    setwd("/your/local/folder/ukb_wes")
     
   }
 
