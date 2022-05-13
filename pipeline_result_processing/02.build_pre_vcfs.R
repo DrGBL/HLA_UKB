@@ -50,7 +50,6 @@ for(folder in 10:60){
       #print(s)
       #print(a)
       if(!is.na(hla_df[s,a])){
-    #test s<-1 and a<-40 with coverage (it's NA, is it normal?) DRB8*01:01
         gene<-sub("\\*.*","",hla_df[s,a])
         coverage<-hla_qc[s,gene]
         if(coverage>=dp_threshold){
@@ -60,9 +59,7 @@ for(folder in 10:60){
             gt_six[hla_df[s,a],s]<-"1/1"
           }
         }
-      } #else {
-#       gt_six[which(startsWith(row.names(gt_six),sub("_.*", "", colnames(hla_df)[a]))),s]<-"./.:."
-#      }
+      } 
     }
   }
 
