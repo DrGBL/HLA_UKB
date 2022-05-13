@@ -10,7 +10,7 @@ names(hla_alleles)<-c("A", "B", "C", "E", "F", "G", "H", "J", "K", "L", "V", "Y"
                       "DQB1", "DRA", "DRB1", "DRB2", "DRB3", "DRB4", "DRB5", "DRB6",
                       "DRB7", "DRB8", "DRB9")
 
-for(folder in 50:60){
+for(folder in 10:60){
  
   samples<-list.dirs(paste0("hla_calling_hla_hd_batch_", folder, "/"),
                      recursive=FALSE) %>%
