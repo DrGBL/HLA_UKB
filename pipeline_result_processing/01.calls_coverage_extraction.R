@@ -158,8 +158,14 @@ for(folder in 10:60){
     }
     
     #now do the coverage
+    #for drb2 and drb7, exon3 was used. exon2 was used for all others
     for(gene in colnames(hla_coverage)[-1]){
       #print(gene)
+      if(gene %in% ("DRB2", "DRB7"){
+        exon<-"exon3"
+       } else {
+        exon<-"exon2"
+       }
       hla_coverage$ID[s]<-samples$samples[s]
       if(file.exists(paste0("result/",
                             samples$samples[s],
@@ -176,8 +182,8 @@ for(folder in 10:60){
           separate_rows(tmp_cov, sep="\t") %>%
           separate_rows(tmp_cov, sep="\n") %>%
           separate_rows(tmp_cov, sep=",") %>%
-          filter(str_detect(tmp_cov, "exon2")) %>%
-          separate(tmp_cov, into=c("exon2", "coverage", "comp"), sep=":") %>%
+          filter(str_detect(tmp_cov, exon)) %>%
+          separate(tmp_cov, into=c("exon", "coverage", "comp"), sep=":") %>%
           mutate(coverage=as.numeric(coverage)) %>%
           summarize(mean(coverage))
       } else {
