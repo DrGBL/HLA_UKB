@@ -22,7 +22,7 @@ bcftools merge --file-list vcf/list_two_vcf.txt --missing-to-ref -Ou | \
   bcftools +fill-tags -Oz > vcf/full_hla_two_digit.vcf.gz
 tabix --csi -p vcf vcf/full_hla_two_digit.vcf.gz
 
-rm hla_*
+rm vcf/hla_*
 
 plink --vcf vcf/full_hla_four_digit.vcf.gz --double-id --make-bed --out vcf/full_hla_four_digit
 plink --vcf vcf/full_hla_six_digit.vcf.gz --double-id --make-bed --out vcf/full_hla_six_digit
