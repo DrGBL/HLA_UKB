@@ -4,6 +4,8 @@ This section provides code to retrieve HLA calls and coverage details for each p
 
 Finally, it creates vcf files for two-digit, four-digit, six-digit, and amino acids. These are eventually made into plink files and used in the Regenie analysis later. The amino acids file was created from the four-digit calls, using the IMGT-HLA database v3450.
 
+These are done on your local cluster, once you have downloaded the files resulting from the HLA calling.
+
 ## Details
 
 ***01.calls_coverage_extraction.R***: this function extracts HLA-HD calls and coverage. For all HLA genes, exon 2 was used for coverage, except for DRB2 and DRB7, for which exon 2 is absent. Exon 3 was used in these two cases.
