@@ -19,7 +19,7 @@ mkdir -p batches
 mkdir -p batches_prelim
 
 #now go to the right location in dna nexus
-dx cd ${path_to_cram}  '/Bulk/Exome sequences/Exome OQFE CRAM files/'
+dx cd ${path_to_cram} 
 
 #list the folders (10 to 60)
 dx ls > folders_full_exomes.txt
