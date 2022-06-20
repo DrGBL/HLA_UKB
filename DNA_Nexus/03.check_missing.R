@@ -1,3 +1,4 @@
+#go to the directory where the folders "hla_calling_hla_hd_batch_X" are located
 setwd("/your/local/folder")
 
 library(tidyverse)
