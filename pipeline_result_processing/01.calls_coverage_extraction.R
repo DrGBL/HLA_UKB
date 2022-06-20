@@ -1,8 +1,13 @@
 #go to the directory where the folders "hla_calling_hla_hd_batch_X" are located
 setwd("/your/local/folder")
 #now also create a "QC" and "calls" folder
-dir.create("QC")
-dir.create("calls")
+if(!dir.exists("QC")){
+  dir.create("QC")
+}
+if(!dir.exists("calls")){
+  dir.create("calls")
+}
+
 
 library(tidyverse)
 library(vroom)
