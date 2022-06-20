@@ -1,4 +1,12 @@
+#again go to the directory where the folders "calls" and "QC" are located
 setwd("/your/local/folder")
+#now create these folders, where files will be output
+if(!dir.exists("vcf")){
+  dir.create("vcf")
+}
+if(!dir.exists("vcf/pre_vcf")){
+  dir.create("vcf/pre_vcf")
+}
 
 library(tidyverse)
 library(vroom)
