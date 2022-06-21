@@ -16,7 +16,8 @@ These are done on your local cluster, once you have downloaded the files resulti
 
 ## Note for the amino acid
 Amino acids position are numbered according to the reference IMGT-HLA sequence. Therefore, there can be protein "indels", which cannot be directly numbered without disrupting the rest of the protein alignment numbering. Hence, we used the following convention:
-- Amino acid variant IDs are named gene_position e.g. for gene A, position 123: A_123
-- For indels, we add "indel" prior to the position, but still increase position by 1 e.g. for an insertion after position 123 in gene A: A_indel124
-- We continue to do this, until we reach the next non-indel position. For example, for a sequence of five amino acid insertion after position 123 in gene A, we would write A_123, A_indel124, A_indel125, A_indel126, A_indel127, A_indel128, A_124
+- Amino acid variant IDs are named gene_position e.g. for gene A, position 123: A_123.
+- For indels, we add "indel" prior to the position, but still increase position by 1 e.g. for an insertion after position 123 in gene A: A_indel124.
+- We continue to do this, until we reach the next non-indel position. For example, for a sequence of five amino acid insertion after position 123 in gene A, we would write A_123, A_indel124, A_indel125, A_indel126, A_indel127, A_indel128, A_124.
+
 This way the alignment numbering is preserved when there are no indels (allowing for proper association analyses), but indels are also clearly numbered.
