@@ -12,6 +12,11 @@ pathSeq<-"/path/to/alignments_aa_fixed/"
 #this is the output folder
 pathAA<-"path/to/amino_acids/output/"
 
+#make a folder "aa_calls" in the output folder
+if(!dir.exists(paste0(pathAA,"aa_calls/"))){
+  dir.create(paste0(pathAA,"aa_calls/")
+}
+
 dat_HLA<-c()
 for(f in 10:60){
   dat_HLA<-vroom(paste0(pathCalls, "hla_df_batch_", f, ".tsv.gz"), col_types = cols(.default = "c")) %>%
@@ -24,6 +29,7 @@ for(f in 10:60){
 #vroom_write(dat_HLA, paste0(pathAA,"hla_four_digit_aa_ready.tsv.gz"))
 #dat_HLA<-vroom(paste0(pathAA,"hla_four_digit_aa_ready.tsv.gz"), col_types = cols(.default = "c"))
 
+#this is just a dummy position for the vcfs
 pos_update<-1
 
 #start gene loop here
@@ -31,14 +37,14 @@ for(gene in c("A", "B", "C", "E", "F", "G",
               "DMA", "DMB", "DOA", "DOB",
               "DPA1", "DPB1", "DQA1", "DQB1",
               "DRA", "DRB1", "DRB3", "DRB4", "DRB5")){
-
-#for(gene in c("DPB1", "DQA1", "DQB1",
-#              "DRA", "DRB1", "DRB3", "DRB4", "DRB5")){
+  #uncomment this to follow progress
   #print(gene)
   
+  #this lists all alleles in the UKB for the corresponding gene
   ukb_alleles<-c(unlist(dat_HLA[,paste0(gene,"_1")]), unlist(dat_HLA[,paste0(gene,"_2")])) %>% unique()
   
-  #DRB1, DRB3, DRB4, DRB5
+  #this extracts the amino acid alignment of every HLA alleles for that gene in the UKB
+  #DRB1, DRB3, DRB4, DRB5 are aligned together, so need to load a different alignment
   if(gene %in% c("DRB1", "DRB3", "DRB4", "DRB5")){
     seq<-vroom(paste0(pathSeq,"DRB_four_fixed.tsv.gz"), col_types = cols(.default = "c")) %>%
       filter(allele %in% ukb_alleles)
@@ -48,17 +54,18 @@ for(gene in c("A", "B", "C", "E", "F", "G",
       filter(allele %in% ukb_alleles)
   }
   
+  #this is a slightly complex block of code. 
+  #In short, it extracts the HLA allele call for each participants, then assigns the "*" and "." to the reference HLA allele (the first one in seq)
+  #It does this for both chromosome (hence the aa1 and aa2)
   aa1_null<-seq[base::match(unlist(dat_HLA[,paste0(gene,"_1")]),unlist(seq$allele)),-1] %>%
     rbind(seq[1,-1],.) %>%
     mutate(across(everything(), gsub, pattern="[\\*\\.]", replacement=NA))
-    #mutate(across(everything(),~ifelse(.x=="*",.x[1],.x)))
   aa1_null<-aa1_null[-1,]
   aa1<-aa1_null
   colnames(aa1)<-paste0(colnames(aa1), "_chr1")
   aa2_null<-seq[base::match(unlist(dat_HLA[,paste0(gene,"_2")]),unlist(seq$allele)),-1] %>%
     rbind(seq[1,-1],.) %>%
     mutate(across(everything(), gsub, pattern="[\\*\\.]", replacement=NA))
-    #mutate(across(everything(),~ifelse(.x=="*",.x[1],.x))) 
   aa2_null<-aa2_null[-1,]
   aa2<-aa2_null
   colnames(aa2)<-paste0(colnames(aa2), "_chr2")
@@ -77,16 +84,17 @@ for(gene in c("A", "B", "C", "E", "F", "G",
   aa_per_pos_var_names<-names(aa_per_pos)[which(lengths(aa_per_pos)>1)]
   aa_per_pos_var<-aa_per_pos[aa_per_pos_var_names]
   
-  #now remove NA and build the vcf per amino acid
+  #this is an intermediate file where every column is an amino acid position (2 columns per gene per position on the protein alignment) for each participants (in each row)
   
   aa<-cbind(aa1, aa2)[order(c(seq_along(aa1), seq_along(aa2)))]
   aa<-aa %>%
     mutate(ID=dat_HLA$ID) %>%
     relocate(ID)
   
-  vroom_write(aa, paste0("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/amino_acids/aa_calls/", gene, "_aa_calls.tsv.gz"))
+  #save if needed
+  vroom_write(aa, paste0(pathAA,"aa_calls/", gene, "_aa_calls.tsv.gz"))
   
-  #now make the vector of variant names (i.e. the different amino acid possibilities)
+  #now make the vector of variant names (i.e. the different amino acid possibilities), to be used for the amino acid vcf
   for(i in 1:length(aa_per_pos_var)){
     aa_per_pos_var[[i]]<-paste0(names(aa_per_pos_var)[i],"_",aa_per_pos_var[[i]])
   }
@@ -98,7 +106,7 @@ for(gene in c("A", "B", "C", "E", "F", "G",
   colnames(vcf_call)<-aa$ID
   rownames(vcf_call)<-var_names
   
-  
+  #her you start building the vcf
   for(i in 1:nrow(vcf_call)){
     if(i %% 100 ==1){
       print(paste0("Gene ", gene, ": ",i,"/",nrow(vcf_call)))
@@ -131,10 +139,12 @@ for(gene in c("A", "B", "C", "E", "F", "G",
     cbind(.,vcf_call) %>%
     rename("#CHROM"=CHROM)
   
+  #this is the file we'll use for the final amino acid vcfs
   vroom_write(vcf, paste0(pathAA,
                           gene,
                           "_amino_acids.tsv.gz"))
   
+  #update the dummy position variable
   pos_update<-pos_update+nrow(vcf_call)
 }
 
