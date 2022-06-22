@@ -16,7 +16,7 @@ path_to_imputed_ukb_file<-"/path/to/imputed/ukb/file"
 #path to where the munged data should be saved
 path_out<-"/path/to/output/folder/
 
-#this munges the UKB imputed allele file
+#now start munging
 hla_imputed<-vroom(path_to_imputed_ukb_file)
 
 #modify the colnames
@@ -27,6 +27,7 @@ cols_hla<-colnames(hla_imputed)[-1] %>% data.frame(names=.) %>%
 
 colnames(hla_imputed)[-1]<-paste0(cols_hla$gene,"*",cols_hla$allele)
 
+#build new data frame
 hla_imputed_munged<-data.frame(ID=hla_imputed$ID,
                                A_1=rep(NA,nrow(hla_imputed)),
                                A_2=rep(NA,nrow(hla_imputed)),
@@ -51,6 +52,7 @@ hla_imputed_munged<-data.frame(ID=hla_imputed$ID,
                                DRB5_1=rep(NA,nrow(hla_imputed)),
                                DRB5_2=rep(NA,nrow(hla_imputed)))
 
+#this assigns hard calls
 for(s in 1:nrow(hla_imputed)){
   if((s%%1000==0)){
     print(paste0(s,"/", nrow(hla_imputed)))
