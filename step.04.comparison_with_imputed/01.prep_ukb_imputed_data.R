@@ -5,7 +5,7 @@
 # and each following columns is the header from ressource 2182.
 # Hence, there are as many rows as participants, and each column (other than the first "ID" column) is a dosage of the corresponding imputed allele.
 
-# this code munges this data frame to assign hard calls based on dosage, to then compare to sequencing results
+# this code munges this data frame to assign hard calls based on dosage, which will be used to compare to sequencing calls in the next steps.
 
 library(tidyverse)
 library(vroom)
