@@ -1,25 +1,47 @@
 library(tidyverse)
 library(vroom)
 
-#again those are folders containing the UKB participants
+if(!dir.exists("comparisons_with_imputed")){
+  dir.create("comparisons_with_imputed")
+}
+
+#again go to the directory where the folders "calls" and "QC" are located
+setwd("/your/local/folder")
+
+#path to munged imputed HLA data (from step 01)
+path_munged_imputed<-"/path/to/munged/imputed"
+
+hla_imputed_munged<-vroom(path_munged_imputed, col_types = cols(.default = "c"))
+
+#again those are folders (10 to 60) containing the UKB participants
 for(folder in 10:60){
 
   hla_df<-vroom(paste0("calls/hla_df_batch_", folder, ".tsv.gz"), col_types = cols(.default = "c"))
 
-  hla_imputed_munged<-vroom("hla_imputation_df_munged.tsv", col_types = cols(.default = "c"))
-  
   #now compare to current batch
   batch_imputed<-hla_imputed_munged %>% 
     filter(ID %in% hla_df$ID)
   batch_imputed[is.na(batch_imputed)]<-"Unimputed"
+  #this removes the "99:01" alleles, which are to be set to unimputed
   batch_imputed<-lapply(batch_imputed, function(x) gsub("[0-9A-Z]*\\*99:01","Unimputed",x)) %>%
     as.data.frame()
   
+  #this is to trim hla calls from sequencing to 4-digit
   hla_df_comparator_four<-lapply(hla_df, function(x) ifelse(str_count(x,":")>1, sub(":[0-9A-Z]*$", "", x), x)) %>%
     as.data.frame() %>%
     filter(ID %in% batch_imputed$ID)
   hla_df_comparator_four[is.na(hla_df_comparator_four)]<-"Uncalled"
   
+  #Note: if need to do comparison at two digit accuracy, could do the following, and use them below instead
+  #batch_imputed_two_digit<-lapply(batch_imputed, function(x) gsub("[0-9A-Z]*\\*99:01","Unimputed",x)) %>%
+  #  as.data.frame() %>%
+  #  lapply(hla_df, function(x) ifelse(str_count(x,":")>0, sub(":[:0-9A-Z]*$", "", x), x)) %>%
+  #  as.data.frame()
+  #hla_df_comparator_two<-lapply(hla_df, function(x) ifelse(str_count(x,":")>0, sub(":[:0-9A-Z]*$", "", x), x)) %>%
+  #  as.data.frame() %>%
+  #  filter(ID %in% batch_imputed$ID)
+                                 
+  #this is the list of imputed genes in the UKB                               
   genes<-c("A",
            "B",
            "C",
