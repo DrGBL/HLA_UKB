@@ -116,9 +116,7 @@ for(g in colnames(comp)[-1]){
   
   fig<-fig %>% plotly_build()
   
+  save_image(tmp, paste0("comparisons_with_imputed/", g,".pdf"))
   
-  saveRDS(fig, paste0("comparisons_with_imputed/",
-                      g,
-                      ".rds"))
 }
 
