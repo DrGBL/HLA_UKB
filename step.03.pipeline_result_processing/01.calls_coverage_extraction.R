@@ -72,9 +72,10 @@ for(folder in 10:60){
     
   }
   
-  genes_hla <- genes_hla %>% filter(!is.na(genes))
+  genes_hla <- genes_hla %>% filter(!is.na(genes) & genes!="Couldn't")
   vroom_write(genes_hla, paste0("genes_hla_", folder,".tsv"))
-  genes_hla<-read_tsv(paste0("genes_hla_", folder,".tsv"))
+  #if need to re-extract
+  #genes_hla<-read_tsv(paste0("genes_hla_", folder,".tsv"))
   
   
   #now set up data frame
@@ -85,8 +86,7 @@ for(folder in 10:60){
                      "_",
                      numbering_vector)
   colnames(hla_matrix)<-c("ID", gene_names)
-  hla_df<-as.data.frame(hla_matrix) %>%
-    select(-c("Couldn't_1","Couldn't_2"))
+  hla_df<-as.data.frame(hla_matrix)
   
   hla_matrix_coverage<-matrix(NA, nrow=nrow(samples), ncol=nrow(genes_hla)+1)
   colnames(hla_matrix_coverage)<-c("ID", genes_hla$genes)
@@ -116,52 +116,21 @@ for(folder in 10:60){
                     fill = TRUE,
                     allowEscapes = FALSE) %>%
       select(c(X1,X2,X3)) %>%
-      mutate(X1=c("A",
-                  "B",
-                  "C",
-                  "DRB1",
-                  "DQA1",
-                  "DQB1",
-                  "DPA1",
-                  "DPB1",
-                  "DMA",
-                  "DMB",
-                  "DOA",
-                  "DOB",
-                  "DRA",
-                  "DRB2",
-                  "DRB3",
-                  "DRB4",
-                  "DRB5",
-                  "DRB6",
-                  "DRB7",
-                  "DRB8",
-                  "DRB9",
-                  "DPA2",
-                  "E",
-                  "F",
-                  "G",
-                  "H",
-                  "J",
-                  "K",
-                  "L",
-                  "Couldn't",
-                  "V",
-                  "Couldn't",
-                  "Y")) %>%
       filter(X1!="Couldn't")
     
     hla_df$ID[s]<-samples$samples[s]
     
-    for(g in 1:(nrow(genes_hla)-1)){
-      if(!(tmp[g,2] %in% c("Not", "typed", "read", "result"))){
-        hla_df[s,2*g] <- tmp[g,2]
-      }
-      if(!(tmp[g,3] %in% c("Not", "typed", "read", "result"))){
-        if(tmp[g,3]=="-"){
-          hla_df[s,2*g+1] <- tmp[g,2]
-        } else {
-          hla_df[s,2*g+1] <- tmp[g,3]
+    for(g in genes_hla$genes){
+      if(length(tmp[which(tmp$X1 == g), 1])>1){
+        if(!(tmp[which(tmp$X1==g),2] %in% c("Not", "typed", "read", "result"))){
+          hla_df[s,paste0(g, "_1")] <- tmp[which(tmp$X1==g),2]
+        }
+        if(!(tmp[which(tmp$X1==g),3] %in% c("Not", "typed", "read", "result"))){
+          if(tmp[which(tmp$X1==g),3]=="-"){
+            hla_df[s,paste0(g, "_2")] <- tmp[which(tmp$X1==g),2]
+          } else {
+            hla_df[s,paste0(g, "_2")] <- tmp[which(tmp$X1==g),3]
+          }
         }
       }
     }
