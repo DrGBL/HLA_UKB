@@ -121,7 +121,7 @@ for(folder in 10:60){
     hla_df$ID[s]<-samples$samples[s]
     
     for(g in genes_hla$genes){
-      if(length(tmp[which(tmp$X1 == g), 1])>1){
+      if(length(tmp[which(tmp$X1 == g), 1])>0){
         if(!(tmp[which(tmp$X1==g),2] %in% c("Not", "typed", "read", "result"))){
           hla_df[s,paste0(g, "_1")] <- tmp[which(tmp$X1==g),2]
         }
