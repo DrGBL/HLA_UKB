@@ -136,10 +136,10 @@ for(folder in 10:60){
     }
     
     #now do the coverage
-    #for drb2 and drb7, exon3 was used. exon2 was used for all others
+    #for drb2 and drb8, exon3 was used. exon2 was used for all others
     for(gene in colnames(hla_coverage)[-1]){
       #print(gene)
-      if(gene %in% c("DRB2", "DRB7")){
+      if(gene %in% c("DRB2", "DRB8")){
         exon<-"exon3"
        } else {
         exon<-"exon2"
