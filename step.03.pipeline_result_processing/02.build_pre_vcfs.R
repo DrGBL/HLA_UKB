@@ -28,15 +28,12 @@ for(folder in 10:60){
   hla_df <- data.frame(lapply(hla_df, function(x){gsub("HLA-", "", x)}))
   
   ######## transform into vcf #########
-  # first obtain all alleles
+  # first obtain all alleles, note that some alleles do not have 3 fields in the database. These are hence reported as (e.g. for HLA-A) A*XX:XX and not as A*XX:XX:01
   all_alleles_six<-stack(hla_df[,-1]) %>%
     filter(!is.na(values)) %>%
     dplyr::select(values) %>%
-    distinct() %>%
-    mutate(count_colon=str_count(values, ":"))
-    
-  all_alleles_six_or_more<-all_alleles_six %>% filter(count_colon>1)
-
+    distinct()
+  
   hla_vcf_six_tmp<-data.frame(CHROM=rep(6, nrow(all_alleles_six)),
                               POS=NA,
                               ID=all_alleles_six$values,
@@ -78,8 +75,7 @@ for(folder in 10:60){
     dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     mutate(POS=str_remove_all(POS, "[NLSCAQ]")) %>%
     mutate(POS=as.numeric(POS)) %>%
-    dplyr::arrange(POS) %>%
-    filter(ID %in% all_alleles_six_or_more$values)
+    dplyr::arrange(POS)
   
   #save result
   vroom_write(hla_vcf_six, paste0("vcf/pre_vcf/hla_six_digit_", folder, ".pre_vcf.tsv.gz"))
