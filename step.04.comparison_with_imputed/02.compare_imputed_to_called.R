@@ -1,6 +1,8 @@
 library(tidyverse)
 library(vroom)
 
+dp_threshold<-10
+
 if(!dir.exists("comparisons_with_imputed")){
   dir.create("comparisons_with_imputed")
 }
@@ -18,15 +20,40 @@ for(folder in 10:60){
 
   hla_df<-vroom(paste0("calls/hla_df_batch_", folder, ".tsv.gz"), col_types = cols(.default = "c"))
 
-  #now compare to current batch
+  #now compare to current batch, assuming that all "99:01" alleles are in fact unimputed
   batch_imputed<-hla_imputed_munged %>% 
     filter(ID %in% hla_df$ID)
   batch_imputed[is.na(batch_imputed)]<-"Unimputed"
-  #this removes the "99:01" alleles, which are to be set to unimputed
   batch_imputed<-lapply(batch_imputed, function(x) gsub("[0-9A-Z]*\\*99:01","Unimputed",x)) %>%
     as.data.frame()
   
-  #this is to trim hla calls from sequencing to 4-digit
+  #now "uncall" the sequenced alleles if below coverage threshold of 10
+  hla_df_four <- lapply(hla_df, function(x) ifelse(str_count(x,":")>1, sub(":[0-9A-Z]*$", "", x), x)) %>%
+    as.data.frame()
+
+  all_alleles_four<-stack(hla_df_four[,-1]) %>%
+    filter(!is.na(values)) %>%
+    dplyr::select(values) %>%
+    distinct()
+
+  hla_df_four_fixed<-hla_df_four
+
+  for(s in 1:nrow(hla_df_four)){
+    #print(s)
+    for(a in 2:ncol(hla_df_four)){
+      #print(s)
+       #print(a)
+      if(!is.na(hla_df_four[s,a])){
+        gene<-sub("\\*.*","",hla_df_four[s,a])
+        coverage<-hla_qc[s,gene]
+        if(coverage<dp_threshold){
+          hla_df_four_fixed[s,a]<-NA
+        }
+      }
+    }
+  }
+
+  #this trims the allele to two fields, and removes the expression suffix (if present)
   hla_df_comparator_four<-lapply(hla_df, function(x) ifelse(str_count(x,":")>1, sub(":[0-9A-Z]*$", "", x), x)) %>%
     as.data.frame() %>%
     filter(ID %in% batch_imputed$ID)
