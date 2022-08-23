@@ -59,13 +59,13 @@ for(gene in c("A", "B", "C", "E", "F", "G",
   #It does this for both chromosome (hence the aa1 and aa2)
   aa1_null<-seq[base::match(unlist(dat_HLA[,paste0(gene,"_1")]),unlist(seq$allele)),-1] %>%
     rbind(seq[1,-1],.) %>%
-    mutate(across(everything(), gsub, pattern="[\\*\\.]", replacement=NA))
+    mutate(across(everything(), gsub, pattern="[\\*\\.X]", replacement=NA))
   aa1_null<-aa1_null[-1,]
   aa1<-aa1_null
   colnames(aa1)<-paste0(colnames(aa1), "_chr1")
   aa2_null<-seq[base::match(unlist(dat_HLA[,paste0(gene,"_2")]),unlist(seq$allele)),-1] %>%
     rbind(seq[1,-1],.) %>%
-    mutate(across(everything(), gsub, pattern="[\\*\\.]", replacement=NA))
+    mutate(across(everything(), gsub, pattern="[\\*\\.X]", replacement=NA))
   aa2_null<-aa2_null[-1,]
   aa2<-aa2_null
   colnames(aa2)<-paste0(colnames(aa2), "_chr2")
