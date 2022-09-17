@@ -60,7 +60,6 @@ for(folder in 10:60){
             if(gt_six[hla_df[s,a],s]=="0/0"){
               coverage_drb1<-as.numeric(pull(hla_qc[s,"DRB1"]))
               if(coverage > 0.6*coverage_drb1 & coverage_drb1 > 10){
-                print("test2")
                 gt_six[hla_df[s,a],s]<-"1/1"
               } else {
                 if(coverage > 0.3*coverage_drb1 & coverage_drb1 > 10){
@@ -128,7 +127,6 @@ for(folder in 10:60){
             if(gt_four[hla_df_four[s,a],s]=="0/0"){
               coverage_drb1<-as.numeric(pull(hla_qc[s,"DRB1"]))
               if(coverage > 0.6*coverage_drb1 & coverage_drb1 > 10){
-                print("test2")
                 gt_four[hla_df_four[s,a],s]<-"1/1"
               } else {
                 if(coverage > 0.3*coverage_drb1 & coverage_drb1 > 10){
@@ -201,7 +199,6 @@ for(folder in 10:60){
             if(gt_two[hla_df_two[s,a],s]=="0/0"){
               coverage_drb1<-as.numeric(pull(hla_qc[s,"DRB1"]))
               if(coverage > 0.6*coverage_drb1 & coverage_drb1 > 10){
-                print("test2")
                 gt_two[hla_df_two[s,a],s]<-"1/1"
               } else {
                 if(coverage > 0.3*coverage_drb1 & coverage_drb1 > 10){
