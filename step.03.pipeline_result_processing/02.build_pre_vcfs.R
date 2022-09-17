@@ -49,22 +49,34 @@ for(folder in 10:60){
   colnames(gt_six)<-hla_df$ID
   rownames(gt_six)<-all_alleles_six$values
   
+  #for DRB345 see here: https://www-sciencedirect-com.proxy3.library.mcgill.ca/science/article/pii/S1357272520301990  
   for(s in 1:nrow(hla_df)){
-    #print(s)
     for(a in 2:ncol(hla_df)){
-      #print(s)
-      #print(a)
       if(!is.na(hla_df[s,a])){
         gene<-sub("\\*.*","",hla_df[s,a])
-        coverage<-hla_qc[s,gene]
+        coverage<-as.numeric(pull(hla_qc[s,gene]))
         if(coverage>=dp_threshold){
-          if(gt_six[hla_df[s,a],s]=="0/0"){
-            gt_six[hla_df[s,a],s]<-"0/1"
+          if(gene %in% c("DRB3", "DRB4", "DRB5")){
+            if(gt_six[hla_df[s,a],s]=="0/0"){
+              coverage_drb1<-as.numeric(pull(hla_qc[s,"DRB1"]))
+              if(coverage > 0.6*coverage_drb1 & coverage_drb1 > 10){
+                print("test2")
+                gt_six[hla_df[s,a],s]<-"1/1"
+              } else {
+                if(coverage > 0.3*coverage_drb1 & coverage_drb1 > 10){
+                  gt_six[hla_df[s,a],s]<-"0/1"
+                }
+              }
+            }
           } else {
-            gt_six[hla_df[s,a],s]<-"1/1"
+            if(gt_six[hla_df[s,a],s]=="0/0"){
+              gt_six[hla_df[s,a],s]<-"0/1"
+            } else {
+              gt_six[hla_df[s,a],s]<-"1/1"
+            }
           }
         }
-      } 
+      }
     }
   }
 
@@ -107,21 +119,32 @@ for(folder in 10:60){
   
     
   for(s in 1:nrow(hla_df_four)){
-    #print(s)
     for(a in 2:ncol(hla_df_four)){
-      #print(s)
-      #print(a)
       if(!is.na(hla_df_four[s,a])){
         gene<-sub("\\*.*","",hla_df_four[s,a])
-        coverage<-hla_qc[s,gene]
+        coverage<-as.numeric(pull(hla_qc[s,gene]))
         if(coverage>=dp_threshold){
-          if(gt_four[hla_df_four[s,a],s]=="0/0"){
-            gt_four[hla_df_four[s,a],s]<-"0/1"
+          if(gene %in% c("DRB3", "DRB4", "DRB5")){
+            if(gt_four[hla_df_four[s,a],s]=="0/0"){
+              coverage_drb1<-as.numeric(pull(hla_qc[s,"DRB1"]))
+              if(coverage > 0.6*coverage_drb1 & coverage_drb1 > 10){
+                print("test2")
+                gt_four[hla_df_four[s,a],s]<-"1/1"
+              } else {
+                if(coverage > 0.3*coverage_drb1 & coverage_drb1 > 10){
+                  gt_four[hla_df_four[s,a],s]<-"0/1"
+                }
+              }
+            }
           } else {
-            gt_four[hla_df_four[s,a],s]<-"1/1"
+            if(gt_four[hla_df_four[s,a],s]=="0/0"){
+              gt_four[hla_df_four[s,a],s]<-"0/1"
+            } else {
+              gt_four[hla_df_four[s,a],s]<-"1/1"
+            }
           }
         }
-      } 
+      }
     }
   }
 
@@ -169,21 +192,32 @@ for(folder in 10:60){
   
   
   for(s in 1:nrow(hla_df_two)){
-    #print(s)
     for(a in 2:ncol(hla_df_two)){
-      #print(s)
-      #print(a)
       if(!is.na(hla_df_two[s,a])){
         gene<-sub("\\*.*","",hla_df_two[s,a])
-        coverage<-hla_qc[s,gene]
+        coverage<-as.numeric(pull(hla_qc[s,gene]))
         if(coverage>=dp_threshold){
-          if(gt_two[hla_df_two[s,a],s]=="0/0"){
-            gt_two[hla_df_two[s,a],s]<-"0/1"
+          if(gene %in% c("DRB3", "DRB4", "DRB5")){
+            if(gt_two[hla_df_two[s,a],s]=="0/0"){
+              coverage_drb1<-as.numeric(pull(hla_qc[s,"DRB1"]))
+              if(coverage > 0.6*coverage_drb1 & coverage_drb1 > 10){
+                print("test2")
+                gt_two[hla_df_two[s,a],s]<-"1/1"
+              } else {
+                if(coverage > 0.3*coverage_drb1 & coverage_drb1 > 10){
+                  gt_two[hla_df_two[s,a],s]<-"0/1"
+                }
+              }
+            }
           } else {
-            gt_two[hla_df_two[s,a],s]<-"1/1"
+            if(gt_two[hla_df_two[s,a],s]=="0/0"){
+              gt_two[hla_df_two[s,a],s]<-"0/1"
+            } else {
+              gt_two[hla_df_two[s,a],s]<-"1/1"
+            }
           }
         }
-      } 
+      }
     }
   }
   
