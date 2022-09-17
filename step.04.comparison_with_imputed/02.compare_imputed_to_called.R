@@ -45,9 +45,11 @@ for(folder in 10:60){
        #print(a)
       if(!is.na(hla_df_four[s,a])){
         gene<-sub("\\*.*","",hla_df_four[s,a])
-        coverage<-hla_qc[s,gene]
-        if(coverage<dp_threshold){
-          hla_df_four_fixed[s,a]<-NA
+        coverage<-as.numeric(pull(hla_qc[s,gene]))
+        if(!(gene %in% c("DRB3", "DRB4", "DRB5"))){
+          if(coverage<dp_threshold){
+            hla_df_four_fixed[s,a]<-NA
+          }
         }
       }
     }
