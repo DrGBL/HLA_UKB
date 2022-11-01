@@ -10,17 +10,17 @@ These are done on your local cluster, once you have downloaded the files resulti
 
 ***01.calls_coverage_extraction.R***: this function extracts HLA-HD calls and coverage. For all HLA genes, exon 2 was used for coverage, except for DRB2 and DRB7, for which exon 2 is absent. Exon 3 was used in these two cases.
 
-***02.build_pre_vcfs.R***: this reads calls for each gene, discards them if below a coverage threshold (10 is used by default), and writes a tsv file that will become a vcf in the next step. This creates one file for 2-digit (1-field), 4-digit (2-field), and 6-digit(3-field) precision. These were obtained by trimming the extra digits/fields and collapse them appropriately in one allele. For example, individuals with HLA-A\*01:01:01 and HLA-A\*01:01:02 at the 6-digit precision were collapsed to HLA-A\*01:01 at the 4-digit precision.
+***03.build_pre_vcfs.R***: this reads calls for each gene, discards them if below a coverage threshold (10 is used by default), and writes a tsv file that will become a vcf in the next step. This creates one file for 2-digit (1-field), 4-digit (2-field), and 6-digit(3-field) precision. These were obtained by trimming the extra digits/fields and collapse them appropriately in one allele. For example, individuals with HLA-A\*01:01:01 and HLA-A\*01:01:02 at the 6-digit precision were collapsed to HLA-A\*01:01 at the 4-digit precision.
 
-***03.build_vcfs_plinks.sh***: this takes the pre-vcf files above, adds a header, and makes them into full vcf files. It also produces plink files from those vcf files. Note that the resulting POS, REF, and ALT columns are dummy variables. Also note that in this vcf, a homozygous individual for the HLA allele in the ID column will be listed as "1/1", and therefore 0/0 individuals do not have the listed allele (or had no calls for that allele with sufficient coverage). This also outputs the full list of alleles for each HLA resolutions.
+***04.build_vcfs_plinks.sh***: this takes the pre-vcf files above, adds a header, and makes them into full vcf files. It also produces plink files from those vcf files. Note that the resulting POS, REF, and ALT columns are dummy variables. Also note that in this vcf, a homozygous individual for the HLA allele in the ID column will be listed as "1/1", and therefore 0/0 individuals do not have the listed allele (or had no calls for that allele with sufficient coverage). This also outputs the full list of alleles for each HLA resolutions.
 
-***04.munge_IMGTHLAv3450_prot.sh***: this processes the IMGT-HLA v3450 protein alignment files.
+***05munge_IMGTHLAv3450_prot.sh***: this processes the IMGT-HLA v3450 protein alignment files.
 
-***05.munge_IMGTHLAv3450_prot_part2.R***: part 2 of the IMGT-HLA processing of protein alignment files. The end result for each gene is a data frame where each column is a different amino acid position, and each row is a different HLA allele for that gene.
+***06.munge_IMGTHLAv3450_prot_part2.R***: part 2 of the IMGT-HLA processing of protein alignment files. The end result for each gene is a data frame where each column is a different amino acid position, and each row is a different HLA allele for that gene.
 
-***06.prep_aa_vcf.R***: this parses through the HLA allele calls for each participant in the UK Biobank, and assigns them their corresponding amino acid sequence, then builds a data frame that will be made into a vcf file in the next step.
+***07.prep_aa_vcf.R***: this parses through the HLA allele calls for each participant in the UK Biobank, and assigns them their corresponding amino acid sequence, then builds a data frame that will be made into a vcf file in the next step.
 
-***07.build_vcf_plink_aa.sh***: this builds the vcf and the plink files for the amino acid association studies.
+***08.build_vcf_plink_aa.sh***: this builds the vcf and the plink files for the amino acid association studies.
 
 ## Note for the amino acid
 Amino acids position are numbered according to the reference IMGT-HLA sequence. Therefore, there can be protein "indels", which cannot be directly numbered without disrupting the rest of the protein alignment numbering. Hence, we used the following convention:
