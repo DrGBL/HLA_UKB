@@ -2,7 +2,7 @@
 cd /your/local/folder
  
 #vcf header to insert
-printf "##fileformat=VCFv4.3\n##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">" | gzip > vcf_header.txt.gz 
+printf "##fileformat=VCFv4.3\n##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">\n" | gzip > vcf_header.txt.gz 
 
 for f in {10..60}; do
   zcat vcf_header.txt.gz vcf/pre_vcf/hla_four_digit_${f}.pre_vcf.tsv.gz | bgzip > vcf/hla_four_digit_${f}.vcf.gz
