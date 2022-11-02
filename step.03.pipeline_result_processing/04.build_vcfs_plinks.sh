@@ -1,5 +1,5 @@
 #again go to the directory where the folders "vcf" is located
-setwd("/your/local/folder")
+cd /your/local/folder
  
 #vcf header to insert
 printf "##fileformat=VCFv4.3\n##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">" | gzip > vcf_header.txt.gz 
