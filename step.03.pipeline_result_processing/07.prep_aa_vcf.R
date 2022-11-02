@@ -14,7 +14,7 @@ pathAA<-"path/to/amino_acids/output/"
 
 #make a folder "aa_calls" in the output folder
 if(!dir.exists(paste0(pathAA,"aa_calls/"))){
-  dir.create(paste0(pathAA,"aa_calls/")
+  dir.create(paste0(pathAA,"aa_calls/"))
 }
 
 dat_HLA<-c()
