@@ -11,7 +11,7 @@ for g in "${genes_hla[@]}"; do
   tabix --csi -p vcf ${g}_amino_acids.vcf.gz
 done
 
-ls | grep _amino_acids.vcf.gz | | grep -v csi > list_aa_vcf.txt
+ls | grep _amino_acids.vcf.gz | grep -v csi > list_aa_vcf.txt
 
 bcftools concat --file-list list_aa_vcf.txt -Ou | \
   bcftools sort -Ou | \
