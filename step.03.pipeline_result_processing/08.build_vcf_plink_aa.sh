@@ -2,7 +2,7 @@
 cd /path/to/amino_acids/
 
 #vcf header to insert
-printf "##fileformat=VCFv4.3\n##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">" | gzip > vcf_header.txt.gz
+printf "##fileformat=VCFv4.3\n##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">\n" | gzip > vcf_header.txt.gz
 
 declare -a genes_hla=("A" "B" "C" "E" "F" "G" "DMA" "DMB" "DOA" "DOB" "DPA1" "DPB1" "DQA1" "DQB1" "DRA" "DRB1" "DRB3" "DRB4" "DRB5")
   
