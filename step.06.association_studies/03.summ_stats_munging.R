@@ -4,9 +4,9 @@ library(tidyverse)
 
 setwd("/path/to/regenie_step_2_outputs/")
 
-pheno<-c("asthma", "auto_immune_thyroid_disorders", "dm1", "lupus", "rheumatoid_arthritis", "ulcerative_colitis",
-          "ankylosing_spondylitis", "coeliac", "crohn", "ms_demyelinating", "myasthenia_gravis", "pernicious_anemia",
-          "pmr_gcc", "psoriasis", "sjogren")
+pheno<-c("asthma", "auto_immune_thyroid_disorders", "dm1", "rheumatoid_arthritis", "ulcerative_colitis",
+          "ankylosing_spondylitis", "coeliac", "crohn", "ms_demyelinating",
+          "pmr_gcc", "psoriasis")
 
 anc<-c("afr", "amr", "eas", "eur", "sas")
 
