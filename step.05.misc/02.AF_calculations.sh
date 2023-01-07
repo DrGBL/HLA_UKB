@@ -1,4 +1,3 @@
-cd /project/richards/guillaume.butler-laporte/HLA/ukb_wes/
 
 pathPlink=/path/to/vcf/
 pathPlinkAA=/path/to/amino_acids/
