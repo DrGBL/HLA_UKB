@@ -1,0 +1,45 @@
+#this is an example of a metal meta-analysis code
+#it uses the output from the adjusted summary statistics from the previous steps
+#you need one of these files per analysis, anc call it with metal e.g. metal 04.meta_analysis_code.txt
+
+SCHEME STDERR
+AVERAGEFREQ ON
+MINMAXFREQ ON
+GENOMICCONTROL OFF
+CUSTOMVARIABLE Num_Cases
+CUSTOMVARIABLE Cases_Ref
+CUSTOMVARIABLE Cases_Het
+CUSTOMVARIABLE Cases_Alt
+CUSTOMVARIABLE Num_Controls
+CUSTOMVARIABLE Controls_Ref
+CUSTOMVARIABLE Controls_Het
+CUSTOMVARIABLE Controls_Alt
+
+SEPARATOR WHITESPACE
+MARKER Name
+ALLELE Alt Ref
+EFFECT beta
+STDERR se
+FREQ AAF
+LABEL Num_Cases as Num_Cases
+LABEL Cases_Ref as Cases_Ref
+LABEL Cases_Het as Cases_Het
+LABEL Cases_Alt as Cases_Alt
+LABEL Num_Controls as Num_Controls
+LABEL Controls_Ref as Controls_Ref
+LABEL Controls_Het as Controls_Het
+LABEL Controls_Alt as Controls_Alt
+PROCESS /path/to/hla_ukb_wes_six_digit_afr_asthma_adj.tsv.gz
+
+PROCESS /path/to/hla_ukb_wes_six_digit_amr_asthma_adj.tsv.gz
+
+PROCESS /path/to/hla_ukb_wes_six_digit_eas_asthma_adj.tsv.gz
+
+PROCESS /path/to/hla_ukb_wes_six_digit_eur_asthma_adj.tsv.gz
+
+PROCESS /path/to/hla_ukb_wes_six_digit_sas_asthma_adj.tsv.gz
+
+OUTFILE /path/out/six_meta_asthma .txt
+ANALYZE HETEROGENEITY
+
+QUIT
