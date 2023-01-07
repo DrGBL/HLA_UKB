@@ -285,7 +285,7 @@ all_alleles_four_digit<-hla_four %>%
 
 hla_four %>%
   filter(Pvalue<5e-8/11) %>%
-  write_tsv("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code/novel_4_digit.tsv")
+  write_tsv("novel_4_digit.tsv")
   
 ggsave("association_studies_results_plots/all_alleles_four_digit.pdf", all_alleles_four_digit, width=13, height=8.5, units="in")
 ggsave("association_studies_results_plots/all_alleles_six_digit.pdf", all_alleles_six_digit, width=13, height=8.5, units="in")
