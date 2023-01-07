@@ -83,7 +83,7 @@ prep_asymld<-function(gene1, gene2, hla_df_calls){
 }
 
 #rest of code, this first section only needs to be ran once
-setwd("/project/richards/guillaume.butler-laporte/HLA/ukb_wes")
+setwd("/folder/which/contains/calls_and_QC_folders/")
 
 dp_threshold<-10
 
@@ -111,7 +111,7 @@ for(folder in 10:60){
 }
 
 #if needed
-#saveRDS(hla_four_full_fixed, "/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code/hla_four_full_fixed.RDS")
+#saveRDS(hla_four_full_fixed, "hla_four_full_fixed.RDS")
 
 rm(hla_df_four_fixed)
 rm(hla_df_four)
@@ -119,7 +119,7 @@ rm(hla_df)
 rm(hla_qc)
 
 #following also ran only once and saved (it calls the big funtion above for each ancestry)
-hla_four_full_fixed<-readRDS("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code/hla_four_full_fixed.RDS") %>%
+hla_four_full_fixed<-readRDS("hla_four_full_fixed.RDS") %>%
   dplyr::select(-paste0(rep(c("DRB2", "DRB3", "DRB4", "DRB5", "DRB6", "DRB7", "DRB8", "DRB9"), each=2), c("_1", "_2"))) %>%
   mutate(across(-c(ID), na_if, y="0"))
 
@@ -155,19 +155,19 @@ for(anc in c("all", "afr", "amr", "eas", "eur", "sas")){
 }
 
 #if needed
-#saveRDS(list_df_asymld, "/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code/list_df_asymld.RDS")
+#saveRDS(list_df_asymld, "list_df_asymld.RDS")
 
 #restart here for the plots if saved earlier
-#list_df_asymld<-readRDS("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code/list_df_asymld.RDS")
+#list_df_asymld<-readRDS("list_df_asymld.RDS")
 
 
-pdf("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code/ld_plots/fig3_ld.pdf", height = 11, width=8.5)
+pdf("fig3_ld.pdf", height = 11, width=8.5)
 par(mfrow=c(3,2))
 for(anc in c("all", "afr", "amr", "eas", "eur", "sas")){
   df_asymld<-list_df_asymld[[anc]]
   df_asymld<-df_asymld[which(!is.na(df_asymld$A)), which(!is.na(df_asymld$A))]
   
-  write_xlsx(df_asymld, paste0("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code/ld_plots/", anc, "_asym_ld.xlsx"))
+  write_xlsx(df_asymld, paste0("ld_plots/", anc, "_asym_ld.xlsx"))
   
   df_upper<-as.matrix(df_asymld)
   df_upper[lower.tri(df_upper)]<-t(df_upper)[lower.tri(df_upper)]
@@ -222,43 +222,4 @@ for(anc in c("all", "afr", "amr", "eas", "eur", "sas")){
 }
 dev.off()
 
-
-df_asymld<-df_asymld[which(!is.na(df_asymld$A)), which(!is.na(df_asymld$A))]
-
-df_upper<-as.matrix(df_asymld)
-df_upper[lower.tri(df_upper)]<-t(df_upper)[lower.tri(df_upper)]
-
-df_lower<-as.matrix(df_asymld)
-df_lower[upper.tri(df_lower)]<-t(df_lower)[upper.tri(df_lower)]
-
-df_mean<-(df_upper+df_lower)/2
-
-#df_mean
-corrplot(df_mean, 
-         tl.col = 'black',
-         order = 'hclust', 
-         addrect = 5, 
-         col.lim=c(0,1), 
-         is.corr=FALSE,
-         col=COL1(sequential="Blues", n=100))
-
-#df_lower
-corrplot(df_lower, 
-         tl.col = 'black',
-         order = 'hclust', 
-         col.lim=c(0,1), 
-         is.corr=FALSE,
-         col=COL1(sequential="Blues", n=100),
-         type="lower",
-         tl.srt = 45)
-
-#df_upper
-corrplot(df_upper, 
-         tl.col = 'black',
-         order = 'hclust', 
-         col.lim=c(0,1), 
-         is.corr=FALSE,
-         col=COL1(sequential="Blues", n=100),
-         type="upper",
-         tl.srt = 45)
 
