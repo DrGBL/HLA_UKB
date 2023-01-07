@@ -5,8 +5,6 @@ library(ggcorrplot)
 library(ggpubr)
 library(cowplot)
 
-setwd("/project/richards/guillaume.butler-laporte/HLA/ukb_wes/regenie_code")
-
 path_to_hla_spread_csv<-"path/to/HLA_SPREAD.csv"  #this file can be found on the git (HLA_SPREAD.zip)
 path_wes_meta_analysis<-"path/to/meta-analysis/from/wes/alleles/"
 path_imputed_meta_analysis<-"path/to/meta-analysis/from/imputed/alleles/"
