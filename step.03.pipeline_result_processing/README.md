@@ -24,7 +24,7 @@ These are done on your local cluster, once you have downloaded the files resulti
 
 ***08.build_vcf_plink_aa.sh***: this builds the vcf and the plink files for the amino acid association studies.
 
-## Note for the amino acid
+## Note for the amino acids
 Amino acids position are numbered according to the reference IMGT-HLA sequence. Therefore, there can be protein "indels", which cannot be directly numbered without disrupting the rest of the protein alignment numbering. Hence, we used the following convention:
 - Amino acid variant IDs are named gene_position e.g. for gene A, position 123: A_123.
 - For indels, we add "indel" prior to the position, but still increase position by 1 e.g. for an insertion after position 123 in gene A: A_indel124.
