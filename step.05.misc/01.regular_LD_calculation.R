@@ -1,4 +1,4 @@
-pathPlink=/project/richards/guillaume.butler-laporte/HLA/ukb_wes/vcf/
+pathPlink=/path/to/vcf/
 pathOut=/path/to/ld_results/
 pathAnc=/path/to/ancestry/files/    #these are files containing FID and IID of each participants in each genetic ancestry
 
