@@ -7,8 +7,6 @@ library(bigsnpr)
 pathOut<-"/path/to/gwas_ld_pred_ready/"
 pathHapMap<-"/path/to/map_hm3_ldpred2.rds"
 
-#options(bigstatsr.check.parallel.blas = FALSE)
-
 info <- readRDS(pathHapMap) %>%
   dplyr::select(c(rsid,ld)) %>%
   rename(SNP=rsid) %>%
