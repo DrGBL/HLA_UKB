@@ -1,15 +1,13 @@
-#again go to the directory where the folders "calls" and "QC" are located
-setwd("/your/local/folder")
-#now create these folders, where files will be output
-if(!dir.exists("vcf")){
-  dir.create("vcf")
-}
-if(!dir.exists("vcf/pre_vcf")){
-  dir.create("vcf/pre_vcf")
-}
+setwd("/project/richards/guillaume.butler-laporte/HLA/ukb_wes")
 
 library(tidyverse)
 library(vroom)
+
+#options(warn=2)
+
+#dp_threshold<-10
+
+
 hla_alleles<-as.list(c((29941260+29945884)/2,
                        (31353872+31367067)/2,
                        (31268749+31272130)/2,
@@ -46,6 +44,7 @@ names(hla_alleles)<-c("A", "B", "C", "E", "F", "G", "H", "J", "K", "L", "V", "Y"
                       "DMA", "DMB", "DOA", "DOB", "DPA1", "DPA2", "DPB1", "DQA1", 
                       "DQB1", "DRA", "DRB1", "DRB2", "DRB3", "DRB4", "DRB5", "DRB6",
                       "DRB7", "DRB8", "DRB9")  
+
 
 all_alleles_six<-c()
 all_alleles_four<-c()
@@ -88,7 +87,6 @@ for(folder in 10:60){
   print(folder)
   
   hla_df<-vroom(paste0("calls/hla_df_batch_qced_", folder, ".tsv.gz"), col_types = cols(.default = "c")) %>% as.data.frame()
-  hla_qc<-vroom(paste0("QC/hla_coverage_batch_", folder, ".tsv.gz"), col_types = cols(.default = "c"))
   
   #remove the HLA prefix if needed
   #hla_df <- data.frame(lapply(hla_df, function(x){gsub("HLA-", "", x)}))
@@ -132,6 +130,7 @@ for(folder in 10:60){
     mutate(POS=hla_alleles[tmp_gene]) %>%
     dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     mutate(POS=as.numeric(POS)) %>%
+    mutate(POS=POS+c(1:nrow(.)) %>%
     dplyr::arrange(POS)
   
   #save result
@@ -178,6 +177,7 @@ for(folder in 10:60){
     mutate(POS=hla_alleles[tmp_gene]) %>%
     dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     mutate(POS=as.numeric(POS)) %>%
+    mutate(POS=POS+c(1:nrow(.)) %>%
     dplyr::arrange(POS)
   
   #save result
@@ -228,6 +228,7 @@ for(folder in 10:60){
     mutate(POS=hla_alleles[tmp_gene]) %>%
     dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     mutate(POS=as.numeric(POS)) %>%
+    mutate(POS=POS+c(1:nrow(.)) %>%
     dplyr::arrange(POS)
   
   #save result
