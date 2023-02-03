@@ -1,50 +1,52 @@
-setwd("/project/richards/guillaume.butler-laporte/HLA/ukb_wes")
+#again go to the directory where the folders "calls" and "QC" are located
+setwd("/your/local/folder")
+#now create these folders, where files will be output
+if(!dir.exists("vcf")){
+  dir.create("vcf")
+}
+if(!dir.exists("vcf/pre_vcf")){
+  dir.create("vcf/pre_vcf")
+}
 
 library(tidyverse)
 library(vroom)
 
-#options(warn=2)
-
-#dp_threshold<-10
-
-
-hla_alleles<-as.list(c((29941260+29945884)/2,
-                       (31353872+31367067)/2,
-                       (31268749+31272130)/2,
-                       (30489509+30494194)/2,
-                       (29722775+29738528)/2,
-                       (29826967+29831125)/2,
-                       (29887752+29890482)/2,
-                       (30006606+30009539)/2,
-                       (29926459+29929232)/2,
-                       (30259625+30261703)/2,
-                       (29792234+29793136)/2,
-                       (29941260+31367067)/2,
-                       (32948613+32969094)/2,
-                       (32934629+32941028)/2,
-                       (33004182+33009591)/2,
-                       (32812763+32820466)/2,
-                       (33064569+33080775)/2,
-                       (33091753+33097295)/2,
-                       (33075990+33089696)/2,
-                       (32628179+32647062)/2,
-                       (32659467+32668383)/2,
-                       (32439878+32445046)/2,
-                       (32577902+32589848)/2,
-                       (32488465+32502952)/2,
-                       (32449765+32462852)/2,
-                       (32542598+32557561)/2,
-                       (32517353+32530287)/2,
-                       (32552713+32560022)/2,
-                       (32627102+32646281)/2,
-                       (32589215+32591752)/2,
-                       (32459821+32473500)/2))
+hla_alleles<-as.list(c(floor((29941260+29945884)/2),
+                       floor((31353872+31367067)/2),
+                       floor((31268749+31272130)/2),
+                       floor((30489509+30494194)/2),
+                       floor((29722775+29738528)/2),
+                       floor((29826967+29831125)/2),
+                       floor((29887752+29890482)/2),
+                       floor((30006606+30009539)/2),
+                       floor((29926459+29929232)/2),
+                       floor((30259625+30261703)/2),
+                       floor((29792234+29793136)/2),
+                       floor((29941260+31367067)/2),
+                       floor((32948613+32969094)/2),
+                       floor((32934629+32941028)/2),
+                       floor((33004182+33009591)/2),
+                       floor((32812763+32820466)/2),
+                       floor((33064569+33080775)/2),
+                       floor((33091753+33097295)/2),
+                       floor((33075990+33089696)/2),
+                       floor((32628179+32647062)/2),
+                       floor((32659467+32668383)/2),
+                       floor((32439878+32445046)/2),
+                       floor((32577902+32589848)/2),
+                       floor((32488465+32502952)/2),
+                       floor((32449765+32462852)/2),
+                       floor((32542598+32557561)/2),
+                       floor((32517353+32530287)/2),
+                       floor((32552713+32560022)/2),
+                       floor((32627102+32646281)/2),
+                       floor((32589215+32591752)/2),
+                       floor((32459821+32473500)/2)))
 
 names(hla_alleles)<-c("A", "B", "C", "E", "F", "G", "H", "J", "K", "L", "V", "Y",
                       "DMA", "DMB", "DOA", "DOB", "DPA1", "DPA2", "DPB1", "DQA1", 
                       "DQB1", "DRA", "DRB1", "DRB2", "DRB3", "DRB4", "DRB5", "DRB6",
                       "DRB7", "DRB8", "DRB9")  
-
 
 all_alleles_six<-c()
 all_alleles_four<-c()
@@ -87,6 +89,7 @@ for(folder in 10:60){
   print(folder)
   
   hla_df<-vroom(paste0("calls/hla_df_batch_qced_", folder, ".tsv.gz"), col_types = cols(.default = "c")) %>% as.data.frame()
+  hla_qc<-vroom(paste0("QC/hla_coverage_batch_", folder, ".tsv.gz"), col_types = cols(.default = "c"))
   
   #remove the HLA prefix if needed
   #hla_df <- data.frame(lapply(hla_df, function(x){gsub("HLA-", "", x)}))
@@ -128,9 +131,12 @@ for(folder in 10:60){
     mutate(tmp_hla=ID) %>%
     separate(tmp_hla, into=c("tmp_gene", "tmp_allele"), sep="[*]") %>%
     mutate(POS=hla_alleles[tmp_gene]) %>%
-    dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     mutate(POS=as.numeric(POS)) %>%
-    mutate(POS=POS+c(1:nrow(.)) %>%
+    dplyr::arrange(POS) %>%
+    group_by(tmp_gene) %>%
+    mutate(POS=POS+c(1:n())) %>%
+    ungroup() %>%
+    dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     dplyr::arrange(POS)
   
   #save result
@@ -170,14 +176,17 @@ for(folder in 10:60){
       } 
     } 
   }
-
+                        
   hla_vcf_four <- cbind(hla_vcf_four_tmp, gt_four) %>%
     mutate(tmp_hla=ID) %>%
     separate(tmp_hla, into=c("tmp_gene", "tmp_allele"), sep="[*]") %>%
     mutate(POS=hla_alleles[tmp_gene]) %>%
-    dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     mutate(POS=as.numeric(POS)) %>%
-    mutate(POS=POS+c(1:nrow(.)) %>%
+    dplyr::arrange(POS) %>%
+    group_by(tmp_gene) %>%
+    mutate(POS=POS+c(1:n())) %>%
+    ungroup() %>%
+    dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     dplyr::arrange(POS)
   
   #save result
@@ -221,16 +230,18 @@ for(folder in 10:60){
     }
   }
 
-  
   hla_vcf_two <- cbind(hla_vcf_two_tmp, gt_two) %>%
     mutate(tmp_hla=ID) %>%
     separate(tmp_hla, into=c("tmp_gene", "tmp_allele"), sep="[*]") %>%
     mutate(POS=hla_alleles[tmp_gene]) %>%
-    dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     mutate(POS=as.numeric(POS)) %>%
-    mutate(POS=POS+c(1:nrow(.)) %>%
+    dplyr::arrange(POS) %>%
+    group_by(tmp_gene) %>%
+    mutate(POS=POS+c(1:n())) %>%
+    ungroup() %>%
+    dplyr::select(-c(tmp_gene,tmp_allele)) %>%
     dplyr::arrange(POS)
-  
+    
   #save result
   vroom_write(hla_vcf_two, paste0("vcf/pre_vcf/hla_two_digit_",folder, ".pre_vcf.tsv.gz"))
   
