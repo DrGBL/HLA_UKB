@@ -10,8 +10,38 @@ if(!dir.exists("vcf/pre_vcf")){
 
 library(tidyverse)
 library(vroom)
+hla_alleles<-as.list(c((29941260+29945884)/2,
+                       (31353872+31367067)/2,
+                       (31268749+31272130)/2,
+                       (30489509+30494194)/2,
+                       (29722775+29738528)/2,
+                       (29826967+29831125)/2,
+                       (29887752+29890482)/2,
+                       (30006606+30009539)/2,
+                       (29926459+29929232)/2,
+                       (30259625+30261703)/2,
+                       (29792234+29793136)/2,
+                       (29941260+31367067)/2,
+                       (32948613+32969094)/2,
+                       (32934629+32941028)/2,
+                       (33004182+33009591)/2,
+                       (32812763+32820466)/2,
+                       (33064569+33080775)/2,
+                       (33091753+33097295)/2,
+                       (33075990+33089696)/2,
+                       (32628179+32647062)/2,
+                       (32659467+32668383)/2,
+                       (32439878+32445046)/2,
+                       (32577902+32589848)/2,
+                       (32488465+32502952)/2,
+                       (32449765+32462852)/2,
+                       (32542598+32557561)/2,
+                       (32517353+32530287)/2,
+                       (32552713+32560022)/2,
+                       (32627102+32646281)/2,
+                       (32589215+32591752)/2,
+                       (32459821+32473500)/2))
 
-hla_alleles<-as.list(c(1:31))
 names(hla_alleles)<-c("A", "B", "C", "E", "F", "G", "H", "J", "K", "L", "V", "Y",
                       "DMA", "DMB", "DOA", "DOB", "DPA1", "DPA2", "DPB1", "DQA1", 
                       "DQB1", "DRA", "DRB1", "DRB2", "DRB3", "DRB4", "DRB5", "DRB6",
@@ -99,9 +129,8 @@ for(folder in 10:60){
   hla_vcf_six <- cbind(hla_vcf_six_tmp, gt_six) %>%
     mutate(tmp_hla=ID) %>%
     separate(tmp_hla, into=c("tmp_gene", "tmp_allele"), sep="[*]") %>%
-    mutate(POS=paste0(hla_alleles[tmp_gene], str_remove_all(tmp_allele, "[:]"))) %>%
+    mutate(POS=hla_alleles[tmp_gene]) %>%
     dplyr::select(-c(tmp_gene,tmp_allele)) %>%
-    mutate(POS=str_remove_all(POS, "[NLSCAQ]")) %>%
     mutate(POS=as.numeric(POS)) %>%
     dplyr::arrange(POS)
   
@@ -146,9 +175,8 @@ for(folder in 10:60){
   hla_vcf_four <- cbind(hla_vcf_four_tmp, gt_four) %>%
     mutate(tmp_hla=ID) %>%
     separate(tmp_hla, into=c("tmp_gene", "tmp_allele"), sep="[*]") %>%
-    mutate(POS=paste0(hla_alleles[tmp_gene], str_remove_all(tmp_allele, "[:]"))) %>%
+    mutate(POS=hla_alleles[tmp_gene]) %>%
     dplyr::select(-c(tmp_gene,tmp_allele)) %>%
-    mutate(POS=str_remove_all(POS, "[NLSCAQ]")) %>%
     mutate(POS=as.numeric(POS)) %>%
     dplyr::arrange(POS)
   
@@ -197,9 +225,8 @@ for(folder in 10:60){
   hla_vcf_two <- cbind(hla_vcf_two_tmp, gt_two) %>%
     mutate(tmp_hla=ID) %>%
     separate(tmp_hla, into=c("tmp_gene", "tmp_allele"), sep="[*]") %>%
-    mutate(POS=paste0(hla_alleles[tmp_gene], str_remove_all(tmp_allele, "[:]"))) %>%
+    mutate(POS=hla_alleles[tmp_gene]) %>%
     dplyr::select(-c(tmp_gene,tmp_allele)) %>%
-    mutate(POS=str_remove_all(POS, "[NLSCAQ]")) %>%
     mutate(POS=as.numeric(POS)) %>%
     dplyr::arrange(POS)
   
