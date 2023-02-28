@@ -14,7 +14,7 @@ library(vroom)
 path_to_imputed_ukb_file<-"/path/to/imputed/ukb/file"
 
 #path to where the munged data should be saved
-path_out<-"/path/to/output/folder/
+path_out<-"/path/to/output/folder/"
 
 #now start munging
 hla_imputed<-vroom(path_to_imputed_ukb_file)
