@@ -93,6 +93,15 @@ for(folder in 10:60){
   hla_coverage<-as.data.frame(hla_matrix_coverage) %>%
     select(-c("Couldn't"))
   
+  hla_drb<-matrix(NA, nrow=nrow(samples), ncol=7)
+  numbering_vector_drb<-rep(c(1,2), 3)
+  drb_names<-paste0(rep(c("DRB3", "DRB4", "DRB5"),
+                         each=2),
+                     "_",
+                     numbering_vector_drb)
+  colnames(hla_matrix)<-c("ID", drb_names)
+  hla_drb_coverage<-as.data.frame(hla_drb)
+  
   #note that this is using the best called alleles at 6 digits. It ignores the other candidates.
   list_error<-list()
   for(s in 1:nrow(samples)){
@@ -168,6 +177,39 @@ for(folder in 10:60){
         list_error[[samples$samples[s]]]<-c(list_error[[samples$samples[s]]],gene)
       }
     }
+   
+    #for DRB3-4-5, extract coverage for both allele, not just mean
+    exon<-"exon2"
+    for(gene in c("DRB3", "DRB4", "DRB5")){
+      #print(gene)
+      hla_drb_coverage$ID[s]<-samples$samples[s]
+      if(file.exists(paste0("result/",
+                            samples$samples[s],
+                            "_",
+                            gene,
+                            ".est.txt"))){
+        tmp_cov_drb<-read_file(paste0("result/",
+                                               samples$samples[s],
+                                               "_",
+                                               gene,
+                                               ".est.txt")) %>%
+          data.frame(tmp_cov=.) %>%
+          separate_rows(tmp_cov, sep=" ") %>%
+          separate_rows(tmp_cov, sep="\t") %>%
+          separate_rows(tmp_cov, sep="\n") %>%
+          separate_rows(tmp_cov, sep=",") %>%
+          filter(str_detect(tmp_cov, exon)) %>%
+          separate(tmp_cov, into=c("exon", "coverage", "comp"), sep=":") %>%
+          mutate(coverage=as.numeric(coverage))
+          
+        hla_drb_coverage[s,paste0(gene, "_1")] <- tmp_cov_drb$coverage[1]
+        hla_drb_coverage[s,paste0(gene, "_2")] <- tmp_cov_drb$coverage[2]
+        
+        
+      } else {
+        list_error[[samples$samples[s]]]<-c(list_error[[samples$samples[s]]],gene)
+      }
+    }
     
     #now remove the recently untarred tar ball
     unlink("result", recursive = TRUE)
@@ -178,6 +220,7 @@ for(folder in 10:60){
 
   vroom_write(hla_df, paste0("calls/hla_df_batch_", folder, ".tsv.gz"))
   vroom_write(hla_coverage, paste0("QC/hla_coverage_batch_", folder, ".tsv.gz"))
+  vroom_write(hla_drb_coverage, paste0("QC/hla_drb_coverage_batch_", folder, ".tsv.gz"))
   
   genes_missing<-data.frame(samples=names(list_error)) %>%
     distinct()
