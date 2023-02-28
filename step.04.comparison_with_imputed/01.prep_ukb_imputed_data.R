@@ -1,9 +1,9 @@
 # The UK Biobank provides HLA imputation from HLA:IMP*2 in data field 22182, with sample row in ressource 1520, and header in Resource 2182.
 # Note that alleles that end in "99:01" are to be considered not imputed, refer to the documentation for more details
 # Imputed HLA are provided as an allele dosage from 0 to 2, for each allele, and it is recommended that scores below 0.8 be set to 0, if hard calls are needed.
-# The following code assumes that the user has already taken these data and made them into a dataframe where the first column is the participant ID
+# The following code assumes that the user has already taken these data and made them into a dataframe where the first columns are the participant FID and IID
 # and each following columns is the header from ressource 2182.
-# Hence, there are as many rows as participants, and each column (other than the first "ID" column) is a dosage of the corresponding imputed allele.
+# Hence, there are as many rows as participants, and each column (other than the first FID and IID columns) is a dosage of the corresponding imputed allele.
 
 # this code munges this data frame to assign hard calls based on dosage, which will be used to compare to sequencing calls in the next steps.
 
@@ -17,7 +17,9 @@ path_to_imputed_ukb_file<-"/path/to/imputed/ukb/file"
 path_out<-"/path/to/output/folder/"
 
 #now start munging
-hla_imputed<-vroom(path_to_imputed_ukb_file)
+hla_imputed<-vroom(path_to_imputed_ukb_file) %>%
+  rename(ID=IID) %>%
+  dplyr::select(-FID)
 
 #modify the colnames
 cols_hla<-colnames(hla_imputed)[-1] %>% data.frame(names=.) %>%
