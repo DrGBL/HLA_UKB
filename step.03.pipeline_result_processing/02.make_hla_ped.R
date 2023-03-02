@@ -26,6 +26,12 @@ for(folder in 10:60){
       if(DP<qc_threshold){
         hla_calls_all_folder[i, paste0(g, "_1")]<-"0"
         hla_calls_all_folder[i, paste0(g, "_2")]<-"0"
+      } else if (g %in% c("DRB3", "DRB4", "DRB5")) {
+        if(coverage_drb[i,paste0(g, "_1")] < coverage_drb[i,paste0(g, "_2")]){
+          tmp_a<-hla_calls_all_folder[i,paste0(g, "_1")]
+          hla_calls_all_folder[i,paste0(g, "_1")]<-hla_calls_all_folder[i,paste0(g, "_2")]
+          hla_calls_all_folder[i,paste0(g, "_2")]<-tmp_a
+        }
       }
     }
   }
