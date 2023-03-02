@@ -13,9 +13,9 @@ for f in {10..60}; do
   tabix --csi -p vcf vcf/hla_two_digit_${f}.vcf.gz;
 done
 
-ls vcf/pre_vcf | grep four | sed 's|pre_vcf|vcf|g' > vcf/list_four_vcf.txt
-ls vcf/pre_vcf | grep two | sed 's|pre_vcf|vcf|g' > vcf/list_two_vcf.txt
-ls vcf/pre_vcf | grep six | sed 's|pre_vcf|vcf|g' > vcf/list_six_vcf.txt
+ls vcf/pre_vcf | grep four | sed 's|pre_vcf.tsv|vcf|g' | sed 's|^|vcf/|' > vcf/list_four_vcf.txt
+ls vcf/pre_vcf | grep two | sed 's|pre_vcf.tsv|vcf|g' | sed 's|^|vcf/|' > vcf/list_two_vcf.txt
+ls vcf/pre_vcf | grep six | sed 's|pre_vcf.tsv|vcf|g' | sed 's|^|vcf/|' > vcf/list_six_vcf.txt
 
 bcftools merge --file-list vcf/list_four_vcf.txt --missing-to-ref -Ou | \
   bcftools +fill-tags -Oz > vcf/full_hla_four_digit.vcf.gz
