@@ -99,7 +99,7 @@ for(folder in 10:60){
                          each=2),
                      "_",
                      numbering_vector_drb)
-  colnames(hla_matrix)<-c("ID", drb_names)
+  colnames(hla_drb)<-c("ID", drb_names)
   hla_drb_coverage<-as.data.frame(hla_drb)
   
   #note that this is using the best called alleles at 6 digits. It ignores the other candidates.
