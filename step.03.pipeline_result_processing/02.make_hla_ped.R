@@ -1,7 +1,7 @@
 library(tidyverse)
 library(vroom)
 
-qc_threshold<-10
+qc_threshold<-20
 
 setwd("/your/local/folder")
 
