@@ -172,7 +172,7 @@ for(folder in 10:60){
           filter(str_detect(tmp_cov, exon)) %>%
           separate(tmp_cov, into=c("exon", "coverage", "comp"), sep=":") %>%
           mutate(coverage=as.numeric(coverage)) %>%
-          summarize(mean(coverage))
+          summarize(sum(coverage))
       } else {
         list_error[[samples$samples[s]]]<-c(list_error[[samples$samples[s]]],gene)
       }
