@@ -3,7 +3,12 @@
 library(tidyverse)
 library(vroom)
 
+#again go to the directory where the folders "calls" and "QC" are located
+setwd("/path/to/folder/")
+
 path_anc<-"/path/to/ancestry/files/"
+path_munged_imputed<-"/path/to/hla_imputation_df_munged.tsv.gz"
+
 
 #ancestries
 afr<-scan(paste0(path_anc, "ukb.afrIDsPCA.txt"))
@@ -13,13 +18,13 @@ eur<-scan(paste0(path_anc, "ukb.eurIDsPCA.txt"))
 sas<-scan(paste0(path_anc, "ukb.sasIDsPCA.txt"))
 
 #imputed data frame
-imputed<-vroom("/path/to/hla_imputation_df_munged.tsv", 
+imputed<-vroom(path_munged_imputed, 
                col_types = cols(.default = "c"))
                
 #sequenced data frames
 sequenced<-c()              
 for(i in 10:60){
-  sequenced<-vroom(paste0("/path/to/hla_df_batch_qced_", i, ".tsv.gz")) %>%
+  sequenced<-vroom(paste0("calls/hla_df_batch_qced_", i, ".tsv.gz")) %>%
   filter(ID %in% imputed$ID) %>%
   dplyr::select(colnames(imputed)) %>%
   bind_rows(sequenced,.)
