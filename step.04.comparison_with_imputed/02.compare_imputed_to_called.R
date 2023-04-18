@@ -1,14 +1,12 @@
 library(tidyverse)
 library(vroom)
 
-dp_threshold<-10
+#again go to the directory where the folders "calls" and "QC" are located
+setwd("/your/local/folder")
 
 if(!dir.exists("comparisons_with_imputed")){
   dir.create("comparisons_with_imputed")
 }
-
-#again go to the directory where the folders "calls" and "QC" are located
-setwd("/your/local/folder")
 
 #path to munged imputed HLA data (from step 01)
 path_munged_imputed<-"/path/to/munged/imputed"
@@ -26,49 +24,13 @@ for(folder in 10:60){
   batch_imputed[is.na(batch_imputed)]<-"Unimputed"
   batch_imputed<-lapply(batch_imputed, function(x) gsub("[0-9A-Z]*\\*99:01","Unimputed",x)) %>%
     as.data.frame()
-  
-  #now "uncall" the sequenced alleles if below coverage threshold of 10
-  hla_df_four <- lapply(hla_df, function(x) ifelse(str_count(x,":")>1, sub(":[0-9A-Z]*$", "", x), x)) %>%
-    as.data.frame()
-
-  all_alleles_four<-stack(hla_df_four[,-1]) %>%
-    filter(!is.na(values)) %>%
-    dplyr::select(values) %>%
-    distinct()
-
-  hla_df_four_fixed<-hla_df_four
-
-  for(s in 1:nrow(hla_df_four)){
-    #print(s)
-    for(a in 2:ncol(hla_df_four)){
-      #print(s)
-       #print(a)
-      if(!is.na(hla_df_four[s,a])){
-        gene<-sub("\\*.*","",hla_df_four[s,a])
-        coverage<-as.numeric(pull(hla_qc[s,gene]))
-        if(!(gene %in% c("DRB3", "DRB4", "DRB5"))){
-          if(coverage<dp_threshold){
-            hla_df_four_fixed[s,a]<-NA
-          }
-        }
-      }
-    }
-  }
 
   #this trims the allele to two fields, and removes the expression suffix (if present)
   hla_df_comparator_four<-lapply(hla_df, function(x) ifelse(str_count(x,":")>1, sub(":[0-9A-Z]*$", "", x), x)) %>%
     as.data.frame() %>%
     filter(ID %in% batch_imputed$ID)
   hla_df_comparator_four[is.na(hla_df_comparator_four)]<-"Uncalled"
-  
-  #Note: if need to do comparison at two digit accuracy, could do the following, and use them below instead
-  #batch_imputed_two_digit<-lapply(batch_imputed, function(x) gsub("[0-9A-Z]*\\*99:01","Unimputed",x)) %>%
-  #  as.data.frame() %>%
-  #  lapply(hla_df, function(x) ifelse(str_count(x,":")>0, sub(":[:0-9A-Z]*$", "", x), x)) %>%
-  #  as.data.frame()
-  #hla_df_comparator_two<-lapply(hla_df, function(x) ifelse(str_count(x,":")>0, sub(":[:0-9A-Z]*$", "", x), x)) %>%
-  #  as.data.frame() %>%
-  #  filter(ID %in% batch_imputed$ID)
+
                                  
   #this is the list of imputed genes in the UKB                               
   genes<-c("A",
