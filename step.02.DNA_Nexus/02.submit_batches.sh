@@ -5,7 +5,7 @@ conda activate dnanexus-env
 #note the name of my project here was "exome_full", change this to whatever is needed for you
 #it will create a workflow in the dna-nexus directory "my_workflow"
 
-java -jardxCompiler-2.5.0.jar compile hla_dnanexus.wdl  -project exome_full -folder /my_workflows/
+java -jar dxCompiler-2.5.0.jar compile hla_dnanexus.wdl  -project exome_full -folder /my_workflows/
 
 #now move to the local directory where you'll work (in my case, where the "batches" folder is located, created from step 01)
 path_local_directory=/your/local/directory
