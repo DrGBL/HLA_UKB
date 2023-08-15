@@ -29,52 +29,58 @@ cols_hla<-colnames(hla_imputed)[-1] %>% data.frame(names=.) %>%
 
 colnames(hla_imputed)[-1]<-paste0(cols_hla$gene,"*",cols_hla$allele)
 
-#build new data frame
-hla_imputed_munged<-data.frame(ID=hla_imputed$ID,
-                               A_1=rep(NA,nrow(hla_imputed)),
-                               A_2=rep(NA,nrow(hla_imputed)),
-                               B_1=rep(NA,nrow(hla_imputed)),
-                               B_2=rep(NA,nrow(hla_imputed)),
-                               C_1=rep(NA,nrow(hla_imputed)),
-                               C_2=rep(NA,nrow(hla_imputed)),
-                               DRB1_1=rep(NA,nrow(hla_imputed)),
-                               DRB1_2=rep(NA,nrow(hla_imputed)),
-                               DQA1_1=rep(NA,nrow(hla_imputed)),
-                               DQA1_2=rep(NA,nrow(hla_imputed)),
-                               DQB1_1=rep(NA,nrow(hla_imputed)),
-                               DQB1_2=rep(NA,nrow(hla_imputed)),
-                               DPA1_1=rep(NA,nrow(hla_imputed)),
-                               DPA1_2=rep(NA,nrow(hla_imputed)),
-                               DPB1_1=rep(NA,nrow(hla_imputed)),
-                               DPB1_2=rep(NA,nrow(hla_imputed)),
-                               DRB3_1=rep(NA,nrow(hla_imputed)),
-                               DRB3_2=rep(NA,nrow(hla_imputed)),
-                               DRB4_1=rep(NA,nrow(hla_imputed)),
-                               DRB4_2=rep(NA,nrow(hla_imputed)),
-                               DRB5_1=rep(NA,nrow(hla_imputed)),
-                               DRB5_2=rep(NA,nrow(hla_imputed)))
-
-#this assigns hard calls
-for(s in 1:nrow(hla_imputed)){
-  if((s%%1000==0)){
-    print(paste0(s,"/", nrow(hla_imputed)))
+#munge
+threshold<-0.8
+hla_imputed_munged<-data.frame(ID=NA)
+for(group in c("A", "B", "C", "DRB1", "DRB3", "DRB4",
+               "DRB5", "DPA1", "DPB1", "DQA1", "DQB1")){
+  cols_to_keep<-colnames(hla_imputed)[which(startsWith(colnames(hla_imputed), group))]
+  
+  alleles<-c()
+  
+  for(g in cols_to_keep){
+    print(g)
+    
+    tmp<-hla_imputed %>% 
+      dplyr::select(c(ID,all_of(g))) %>%
+      filter(!!sym(g)>threshold) %>%
+      mutate(n=ifelse(!!sym(g)>2*threshold,2,1)) %>%
+      mutate(c=g) %>%
+      dplyr::select(c(ID,n,c))
+    
+    tmp2<-rbind(tmp,
+                tmp %>% 
+                  filter(n == 2)) %>%
+      dplyr::select(-n) %>%
+      rename(!!sym(group):=c)
+    
+    alleles<-alleles %>%
+      rbind(.,tmp2)
+    
   }
   
-  for(a in 2:ncol(hla_imputed)){
-    if(hla_imputed[s,a] >= 0.8){
-      gene_base <- sub("\\*.*", "", colnames(hla_imputed)[a])
-      if(hla_imputed[s,a] >= 1.6){
-        hla_imputed_munged[s,paste0(gene_base, "_1")]<-colnames(hla_imputed)[a]
-        hla_imputed_munged[s,paste0(gene_base, "_2")]<-colnames(hla_imputed)[a]
-      } else {
-        if(is.na(hla_imputed_munged[s,paste0(gene_base, "_1")])){
-          hla_imputed_munged[s,paste0(gene_base, "_1")]<-colnames(hla_imputed)[a]
-        } else {
-          hla_imputed_munged[s,paste0(gene_base, "_2")]<-colnames(hla_imputed)[a]
-        }
-      }
-    }
-  }
+  alleles<-alleles %>%
+    group_by(ID) %>%
+    mutate(n=1:n()) %>%
+    ungroup()
+  
+  alleles_p1<-alleles %>%
+    filter(n==1) %>%
+    rename(!!paste0(group,"_1"):=!!sym(group)) %>%
+    dplyr::select(-n)
+  
+  alleles_p2<-alleles %>%
+    filter(n==2) %>%
+    rename(!!paste0(group,"_2"):=!!sym(group)) %>%
+    dplyr::select(-n)
+  
+  hla_imputed_munged<-full_join(hla_imputed_munged,
+                   full_join(alleles_p1,
+                             alleles_p2))
+  
 }
-  
+
+hla_imputed_munged<-hla_imputed_munged %>%
+  filter(!is.na(ID))
+ 
 write_tsv(hla_imputed_munged, paste0(path_out, "hla_imputation_df_munged.tsv"))
