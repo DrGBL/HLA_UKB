@@ -30,7 +30,7 @@ cols_hla<-colnames(hla_imputed)[-1] %>% data.frame(names=.) %>%
 colnames(hla_imputed)[-1]<-paste0(cols_hla$gene,"*",cols_hla$allele)
 
 #munge
-threshold<-0.8   #if this is above 2/3, then you could get in situation where there will be more than 3 allele calls
+threshold<-0.8   #if this is above 2/3, then you could get in situation where there will be more than 3 allele calls per gene
 hla_imputed_munged<-data.frame(ID=NA)
 for(group in c("A", "B", "C", "DRB1", "DRB3", "DRB4",
                "DRB5", "DPA1", "DPB1", "DQA1", "DQB1")){
