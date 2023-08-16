@@ -239,7 +239,7 @@ for(folder in 10:60){
     }
   }
 
-  writeRDS(num_in_hla_imp, paste0("comparisons_with_imputed/num_alleles_in_imp_ref_", i, ".RDS"))
+  saveRDS(num_in_hla_imp, paste0("comparisons_with_imputed/num_alleles_in_imp_ref_", i, ".RDS"))
                                  
   vroom_write(comparisons, paste0("comparisons_with_imputed/comparisons_imputed_called_folder_", folder, ".tsv.gz"))
   
