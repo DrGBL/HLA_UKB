@@ -1,6 +1,15 @@
 library(tidyverse)
 library(vroom)
 
+path_anc<-"path_to_anc_folder"
+
+#ancestries
+afr<-scan(paste0(path_anc, "ukb.afrIDsPCA.txt"))
+amr<-scan(paste0(path_anc, "ukb.amrIDsPCA.txt"))
+eas<-scan(paste0(path_anc, "ukb.easIDsPCA.txt"))
+eur<-scan(paste0(path_anc, "ukb.eurIDsPCA.txt"))
+sas<-scan(paste0(path_anc, "ukb.sasIDsPCA.txt"))
+
 #again go to the directory where the folders "calls" and "QC" are located
 setwd("/your/local/folder")
 
@@ -13,10 +22,44 @@ path_munged_imputed<-"/path/to/munged/imputed"
 
 hla_imputed_munged<-vroom(path_munged_imputed, col_types = cols(.default = "c"))
 
+
+#option choices, useful for later
+options<-c("Both uncalled, one allele imputed", 
+  "Both uncalled, both alleles imputed",
+  "Both uncalled and unimputed",
+  "One match, other uncalled and unimputed",
+  "One match, other unimputed",
+  "One match, other uncalled but imputed",
+  "One match, one mismatch imputation",
+  "Two matches",
+  "One called, both unimputed",
+  "One called, one unimputed, no match",
+  "One called, both imputed, no match",
+  "Both called, both unimputed",
+  "Both called, one unimputed, no match",
+  "Both called, both imputed, no match")
+
+#alleles in the imputation panel by ukb https://biobank.ndph.ox.ac.uk/showcase/refer.cgi?id=2182
+imputed_alleles<-data.frame(alleles=scan("imputed_alleles_link_file.txt", what=character())) %>%
+  mutate(alleles=ifelse(nchar(str_extract(alleles, "[0-9]*$"))==3,
+                        str_replace(alleles,"_","_0"),
+                        alleles)) %>%
+  mutate(alleles=paste0(str_extract(alleles,
+                                    "^[A-Z0-9]*"),
+                        "*",
+                        str_extract(alleles,
+                                    "_[0-9][0-9]"),
+                        ":",
+                        str_extract(alleles,
+                                    "[0-9][0-9]$"))) %>%
+  mutate(alleles=str_replace(alleles,"_","")) %>%
+  filter(!str_detect(alleles,"99:01"))
+
+
 #again those are folders (10 to 60) containing the UKB participants
 for(folder in 10:60){
 
-  hla_df<-vroom(paste0("calls/hla_df_batch_", folder, ".tsv.gz"), col_types = cols(.default = "c"))
+  hla_df<-vroom(paste0("calls/hla_df_batch_qced_", folder, ".tsv.gz"), col_types = cols(.default = "c"))
 
   #now compare to current batch, assuming that all "99:01" alleles are in fact unimputed
   batch_imputed<-hla_imputed_munged %>% 
@@ -152,7 +195,52 @@ for(folder in 10:60){
   
   comparisons<-comparisons %>%
     mutate_if(sapply(comparisons, is.character), as.factor)
+    #num_in_hla_imp
+  num_in_hla_imp<-list()
   
+  for(g in genes){
+    basic_df<-as.data.frame(matrix(0,nrow=6,ncol=length(options)))
+    colnames(basic_df)<-options
+    basic_df<-bind_cols(data.frame(ancestry=c("all","afr","amr","eas","eur","sas")),
+                        basic_df)
+    for(a in c("afr","amr","eas","eur","sas","all")){
+      if(a!="all"){
+        comp_tmp<-comparisons %>% filter(ID_col %in% !!sym(a))
+        hla_df_tmp<-hla_df_comparator_four %>% filter(ID %in% !!sym(a))
+        for(o in options){
+          ids<-comp_tmp$ID_col[which(comp_tmp[,g]==o)]
+          alleles_tmp<-data.frame(alleles=c(hla_df_tmp %>% 
+                                              filter(ID %in% ids) %>% 
+                                              pull(paste0(g,"_1")),
+                                            hla_df_tmp %>% 
+                                              filter(ID %in% ids) %>% 
+                                              pull(paste0(g,"_2")))) %>%
+            filter(alleles %in% imputed_alleles$alleles) %>%
+            nrow()
+          basic_df[which(basic_df$ancestry==a),o]<-alleles_tmp
+        }
+      } else {
+        comp_tmp<-comparisons %>% filter(ID_col %in% c(afr,amr,eas,eur,sas))
+        hla_df_tmp<-hla_df_comparator_four %>% filter(ID_col %in% c(afr,amr,eas,eur,sas))
+        for(o in options){
+          ids<-comp_tmp$ID_col[which(comp_tmp[,g]==o)]
+          alleles_tmp<-data.frame(alleles=c(hla_df_tmp %>% 
+                                              filter(ID %in% ids) %>% 
+                                              pull(paste0(g,"_1")),
+                                            hla_df_tmp %>% 
+                                              filter(ID %in% ids) %>% 
+                                              pull(paste0(g,"_2")))) %>%
+            filter(alleles %in% imputed_alleles$alleles) %>%
+            nrow()
+          basic_df[which(basic_df$ancestry==a),o]<-alleles_tmp
+        }
+      }
+      num_in_hla_imp[[g]]<-basic_df
+    }
+  }
+
+  writeRDS(num_in_hla_imp, paste0("comparisons_with_imputed/num_alleles_in_imp_ref_", i, ".RDS"))
+                                 
   vroom_write(comparisons, paste0("comparisons_with_imputed/comparisons_imputed_called_folder_", folder, ".tsv.gz"))
   
 }
